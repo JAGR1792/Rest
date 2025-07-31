@@ -3,28 +3,72 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explorador de Países</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
-    <h1> Explorador de Países</h1>
-    <div class="grid-container">
-        {% for country in countries %}
-        <div class="country-card">
-            <img src="{{ country.flags.png }}" alt="Bandera de {{ country.name.common }}">
-            <h2>{{ country.name.common }}</h2>
-            <p>Capital: {{ country.capital[0] if country.capital }}</p>
-            <a href="{{ url_for('detalles', name=country.name.common) }}">
-                <button>Detalles</button>
-            </a>
+    <header class="main-header">
+        <div class="header-container">
+            <h1 class="page-title">Explorador de Países</h1>
+            <div class="header-subtitle">
+                <p class="subtitle-text">Descubre información detallada sobre todos los países del mundo</p>
+            </div>
         </div>
+    </header>
 
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="countries-section">
+                <div class="section-header">
+                    <h2 class="section-title">Países del Mundo</h2>
+                    <div class="countries-count">
+                        <span class="count-text">{{ countries|length }} países disponibles</span>
+                    </div>
+                </div>
+                
+                <div class="grid-container">
+                    {% for country in countries %}
+                    <article class="country-card">
+                        <div class="card-header">
+                            <div class="flag-container">
+                                <img src="{{ country.flags.png }}" 
+                                     alt="Bandera de {{ country.name.common }}" 
+                                     class="country-flag">
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="country-info">
+                                <h2 class="country-name">{{ country.name.common }}</h2>
+                                <div class="country-details">
+                                    <p class="country-capital">
+                                        <span class="detail-label">Capital:</span>
+                                        <span class="detail-value">{{ country.capital[0] if country.capital else 'No disponible' }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="card-actions">
+                                <a href="{{ url_for('paises_detalle', pais=country.name.common) }}" class="details-link">
+                                    <button class="details-button" type="button">
+                                        <span class="button-text">Ver Detalles</span>
+                                        <span class="button-icon">→</span>
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
 
-        {% endfor %}
-    </div>
-
-
+  
 </body>
 
 </html>

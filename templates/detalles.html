@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ country.name.common }} - Detalles Completos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+</head>
+
+<body>
+    <div class="container">
+        <a href="{{ url_for('home') }}" class="back-button">← Volver a la lista</a>
+        
+        <div class="header">
+            <div class="country-title">
+                <img src="{{ country.flags.png }}" alt="Bandera de {{ country.name.common }}" class="main-flag">
+                <div class="title-text">
+                    <h1>{{ country.name.common }}</h1>
+                    <p>{{ country.name.official }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            <!-- Información Básica -->
+            <div class="detail-card">
+                <h3>Información Básica</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Capital:</span>
+                    <span class="detail-value">
+                        {% if country.capital %}
+                            {{ country.capital[0] }}
+                        {% else %}
+                            No disponible
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Región:</span>
+                    <span class="detail-value">{{ country.region }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Subregión:</span>
+                    <span class="detail-value">{{ country.subregion or 'No disponible' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Independiente:</span>
+                    <span class="detail-value">{{ 'Sí' if country.independent else 'No' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Miembro ONU:</span>
+                    <span class="detail-value">{{ 'Sí' if country.unMember else 'No' }}</span>
+                </div>
+            </div>
+
+            <!-- Demografía -->
+            <div class="detail-card">
+                <h3>Demografía y Territorio</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Población:</span>
+                    <span class="detail-value large-number">{{ "{:,}".format(country.population).replace(',', '.') }} habitantes</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Área:</span>
+                    <span class="detail-value large-number">{{ "{:,}".format(country.area).replace(',', '.') }} km²</span>
+                </div>
+                {% if country.get('gini') %}
+                <div class="detail-item">
+                    <span class="detail-label">Índice Gini:</span>
+                    <span class="detail-value">
+                        {% for year, value in country.gini.items() %}
+                            {{ value }} ({{ year }})
+                        {% endfor %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Idiomas -->
+            <div class="detail-card">
+                <h3> Idiomas</h3>
+                {% if country.languages %}
+                    <div class="tags-container">
+                        {% for code, language in country.languages.items() %}
+                            <span class="tag language">{{ language }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No hay información de idiomas disponible</p>
+                {% endif %}
+            </div>
+
+            <!-- Monedas -->
+            <div class="detail-card">
+                <h3> Monedas</h3>
+                {% if country.currencies %}
+                    {% for code, currency in country.currencies.items() %}
+                        <div class="detail-item">
+                            <span class="detail-label">{{ code }}:</span>
+                            <span class="detail-value">
+                                {{ currency.name }}
+                                {% if currency.symbol %}
+                                    ({{ currency.symbol }})
+                                {% endif %}
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay información de monedas disponible</p>
+                {% endif %}
+            </div>
+
+            <!-- Códigos y Identificadores -->
+            <div class="detail-card">
+                <h3> Códigos e Identificadores</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Código ISO (cca2):</span>
+                    <span class="detail-value">{{ country.cca2 }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Código ISO (cca3):</span>
+                    <span class="detail-value">{{ country.cca3 }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Código numérico:</span>
+                    <span class="detail-value">{{ country.ccn3 }}</span>
+                </div>
+                {% if country.get('idd') %}
+                <div class="detail-item">
+                    <span class="detail-label">Código telefónico:</span>
+                    <span class="detail-value">
+                        {{ country.idd.root }}{% if country.idd.suffixes %}{{ country.idd.suffixes[0] }}{% endif %}
+                    </span>
+                </div>
+                {% endif %}
+                {% if country.get('tld') %}
+                <div class="detail-item">
+                    <span class="detail-label">Dominio internet:</span>
+                    <span class="detail-value">{{ country.tld[0] }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Ubicación -->
+            <div class="detail-card">
+                <h3>Ubicación Geográfica</h3>
+                {% if country.get('latlng') %}
+                <div class="detail-item">
+                    <span class="detail-label">Coordenadas:</span>
+                    <span class="detail-value coordinates">
+                        {{ "%.4f"|format(country.latlng[0]) }}, {{ "%.4f"|format(country.latlng[1]) }}
+                    </span>
+                </div>
+                {% endif %}
+                {% if country.get('landlocked') is defined %}
+                <div class="detail-item">
+                    <span class="detail-label">Sin salida al mar:</span>
+                    <span class="detail-value">{{ 'Sí' if country.landlocked else 'No' }}</span>
+                </div>
+                {% endif %}
+                {% if country.get('borders') %}
+                <div class="detail-item">
+                    <span class="detail-label">Países fronterizos:</span>
+                    <span class="detail-value">
+                        <div class="tags-container">
+                            {% for border in country.borders %}
+                                <span class="tag">{{ border }}</span>
+                            {% endfor %}
+                        </div>
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Zonas Horarias -->
+            <div class="detail-card">
+                <h3> Zonas Horarias</h3>
+                {% if country.timezones %}
+                    <div class="tags-container">
+                        {% for timezone in country.timezones %}
+                            <span class="tag timezone">{{ timezone }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No hay información de zonas horarias disponible</p>
+                {% endif %}
+            </div>
+
+            <!-- Símbolos Nacionales -->
+            <div class="detail-card">
+                <h3> Símbolos Nacionales</h3>
+                <div class="flag-section">
+                    <div>
+                        <p><strong>Bandera:</strong></p>
+                        <img src="{{ country.flags.png }}" alt="Bandera de {{ country.name.common }}" class="flag-img">
+                        {% if country.flags.get('alt') %}
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">{{ country.flags.alt }}</p>
+                        {% endif %}
+                    </div>
+                    {% if country.get('coatOfArms') and country.coatOfArms.get('png') %}
+                    <div>
+                        <p><strong>Escudo de Armas:</strong></p>
+                        <img src="{{ country.coatOfArms.png }}" alt="Escudo de {{ country.name.common }}" class="coat-of-arms">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Información Adicional -->
+            {% if country.get('capitalInfo') or country.get('car') or country.get('postalCode') %}
+            <div class="detail-card">
+                <h3>ℹ Información Adicional</h3>
+                {% if country.get('capitalInfo') and country.capitalInfo.get('latlng') %}
+                <div class="detail-item">
+                    <span class="detail-label">Coordenadas capital:</span>
+                    <span class="detail-value coordinates">
+                        {{ "%.4f"|format(country.capitalInfo.latlng[0]) }}, {{ "%.4f"|format(country.capitalInfo.latlng[1]) }}
+                    </span>
+                </div>
+                {% endif %}
+                {% if country.get('car') %}
+                <div class="detail-item">
+                    <span class="detail-label">Lado de conducción:</span>
+                    <span class="detail-value">{{ 'Izquierda' if country.car.side == 'left' else 'Derecha' }}</span>
+                </div>
+                {% if country.car.get('signs') %}
+                <div class="detail-item">
+                    <span class="detail-label">Matrícula vehicular:</span>
+                    <span class="detail-value">{{ country.car.signs[0] }}</span>
+                </div>
+                {% endif %}
+                {% endif %}
+                {% if country.get('postalCode') %}
+                <div class="detail-item">
+                    <span class="detail-label">Formato código postal:</span>
+                    <span class="detail-value">{{ country.postalCode.format }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Enlaces a mapas -->
+        {% if country.get('maps') %}
+        <div style="text-align: center; margin-top: 2rem;">
+            {% if country.maps.get('googleMaps') %}
+                <a href="{{ country.maps.googleMaps }}" target="_blank" class="map-link">Ver en Google Maps</a>
+            {% endif %}
+            {% if country.maps.get('openStreetMaps') %}
+                <a href="{{ country.maps.openStreetMaps }}" target="_blank" class="map-link" style="background: #f39c12;">Ver en OpenStreetMap</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+
+</html>
