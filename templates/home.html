@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Explorador de Países</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <h1> Explorador de Países</h1>
+    <div class="grid-container">
+        {% for country in countries %}
+        <div class="country-card">
+            <img src="{{ country.flags.png }}" alt="Bandera de {{ country.name.common }}">
+            <h2>{{ country.name.common }}</h2>
+            <p>Capital: {{ country.capital[0] if country.capital }}</p>
+            <a href="{{ url_for('detalles', name=country.name.common) }}">
+                <button>Detalles</button>
+            </a>
+        </div>
+
+
+        {% endfor %}
+    </div>
+
+
+</body>
+
+</html>

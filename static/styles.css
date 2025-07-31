@@ -1,0 +1,42 @@
+country-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    background-color: #f9f9f9;
+    box-shadow: inset;
+}
+    img {
+        width: 100px;
+        height: auto;
+        border-radius: 4px;
+    }
+    h2 {
+        font-size: 1.5em;
+        margin: 10px 0;
+    }
+    p {
+        color: #555;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .country-card button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 18px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 12px;
+    }
+
+    .country-card button:hover {
+        background-color: #0056b3;
+    }
